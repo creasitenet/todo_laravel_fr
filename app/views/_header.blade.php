@@ -12,7 +12,7 @@
             @if ($user)
             <a href="deconnexion">Se déconnecter</a>
             @endif
-            <a href="https://creasitenet.com/" target="_blank">Creasitenet.com</a>      
+            <a href="http://creasitenet.com/" target="_blank">Creasitenet.com</a>      
 
             <a href="http://facebook.com/creasitenet" target="_blank"><i class="fa fa-facebook"></i></a>
             <a href="http://twitter.com/creasitenet" target="_blank"><i class="fa fa-twitter"></i></a>
