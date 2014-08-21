@@ -1,0 +1,54 @@
+
+<?php $__env->startSection('content'); ?>
+
+<div class="container content">   
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
+
+			    <div class="reg-header">            
+			        <h3>Réinitialisez votre mot de passe</h3>
+			    </div>
+
+                <div class="alert alert-info alert-bold-border fade in alert-dismissable">
+                    Pour réinitialiser votre mot de passe, entrez votre identifiant ou votre adresse email.
+                    Un email avec un lien de confirmation vous sera envoyé.
+                </div>
+
+                <?php echo $__env->make('_notifications', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+
+				<?php if(Session::has('success')): ?>
+
+				<?php else: ?>
+
+					<?php echo Form::open(array('route' => 'identifiants-perdus-post')); ?>
+
+					<div class="form-group <?php echo $errors->has('identifiant') ? ' has-error' : ''; ?>">
+	                <div class="input-group margin-bottom-20">
+	                    <span class="input-group-addon"><i class="fa fa-user"></i></span>
+	            		<input type="text" name="identifiant" class="form-control input-lg" <?php echo Input::old('identifiant') ? ' value="'. e(Input::old('identifiant')) .'"' : ''; ?> placeholder="Identifiant ou email" />
+	            	</div>
+	                <span class="help-block"><?php echo $errors->first('identifiant'); ?></span>            
+	                </div>       
+
+					<div class="row">
+					    <div class="col-md-6"></div>
+					    <div class="col-md-6">
+					        <input type="submit" name="identifiants_perdus" value="REINITIALISER" class="btn btn-green btn-lg pull-right"  />                     
+					    </div>
+					</div>
+
+					<?php echo Form::close(); ?>
+
+	                <hr>
+                    <h4>Souvenu ?</h4>
+	                <p><a href="<?php echo URL::route('connexion'); ?>" class="color-green">Connectez vous</a></p>
+
+	            <?php endif; ?>
+	            <br />   
+
+		</div>
+    </div>
+</div>  
+
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
