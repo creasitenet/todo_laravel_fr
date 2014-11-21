@@ -1,12 +1,9 @@
 <?php
 class AccesController extends \BaseController {
 
-	public function __construct() {        
-    }
-
-	// Connexion
+	// Acces
 	public function getConnexion() {
-		return View::make('acces.connexion');
+		return View::make('acces.connexion',array('titre'=>'Connexion'));
 	}
 
 	public function postConnexion() {
@@ -16,40 +13,52 @@ class AccesController extends \BaseController {
 				'mot_de_passe' => 'required'
 			)
 		);
+		// Erreur Validation
 		if($valid->fails()) {
 			return Redirect::route('connexion')
 			->withInput()
 			->withErrors($valid);
 		}
-		$user = User::where('username', '=', Input::get('identifiant'));
-		if (!$user->count()) { 
-			$user = User::where('email', '=', Input::get('identifiant'));
-		}		
-		if($user->count()) {
-			$user = $user->first();
-			if(Hash::check(Input::get('mot_de_passe'), $user->password)) {
-				Auth::login($user);
-				return Redirect::intended('/');
-			} else {
+		// Validation ok
+		if($valid->passes()) {			
+			$user = User::where('username', '=', Input::get('identifiant'))
+						->orWhere('email', '=', Input::get('identifiant'))
+						->first();
+			// Utilisateur trouvé
+			if($user) {
+				// Identifiant corrects
+				if(Hash::check(Input::get('mot_de_passe'), $user->password)) {
+					Auth::login($user);
+					// Redirection compte
+					return Redirect::intended('/')
+						->with('success', 'Vous êtes maintenant connecté');
+				}
+				// Identifiant incorrects
 				return Redirect::route('connexion')
+					->withInput()
+					->with('error', 'Identifiants incorrects. Rééssayez.');
+			}			
+			// Utilisateur non trouvé
+			return Redirect::route('connexion')
 				->withInput()
-				->with('error', 'Identifiants incorrects. Rééssayez.');
-			}
+				->with('error', "Identifiants incorrects. Rééssayez."); 
 		}
+		// Erreur enregistrement en base de donnée				
 		return Redirect::route('connexion')
-		->withInput()
-		->with('error', "Identifiants incorrects. Rééssayez.");
+			->withInput()
+			->with('unex-error');
 	}
 
 	// Déconnexion
 	public function getDeconnexion() {
 		Auth::logout();
-		return Redirect::to('/');
+		return Redirect::to('/')
+			->with('success', 'Vous avez été déconnecté');
 	}
 
 	// Identifiants perdus
 	public function getIdentifiantsPerdus() {
-		return View::make('acces.identifiants-perdus');
+		return View::make('acces.identifiants_perdus',array('titre'=>'Identifiants perdus'));
 	}
 
 	public function postIdentifiantsPerdus() {
@@ -58,127 +67,91 @@ class AccesController extends \BaseController {
 				'identifiant' => 'required'
 			)
 		);
+		// Erreur Validation
 		if($valid->fails()) {
 			return Redirect::route('identifiants-perdus')
-			->withInput()
-			->withErrors($valid);
+				->withInput()
+				->withErrors($valid);
 		}
-		$user = User::where('username', '=', Input::get('identifiant'));
-		if (!$user->count()) { 
-			$user = User::where('email', '=', Input::get('identifiant'));
-		}
-		if($user->count()) {
-			$user = $user->first();
-			// un novueau mot de passe temporaire
-			$nouveau_mot_de_passe = str_random(10);
-			$user->password_temp = Hash::make($nouveau_mot_de_passe);		
-			// un token
-			$token = str_random(60);
-			$user->token = $token;
-			if($user->save()) {
-				$email = Mail::send('emails.identifiants-perdus', 
-								array(
-									'username' => $user->username, 
-									'link' => URL::route('identifiants-perdus-confirmer', 
-												array(
-													'userid' => $user->id, 
-													'token' => $user->token, 
-												)),
-									'nouveau_mot_de_passe' => $nouveau_mot_de_passe
-								), 
-								function($message) use ($user) {
-									$message->to($user->email, $user->username)
-											->subject('Demande de nouveau mot de passe');
-								}
-							);
+		// Validation ok
+		if($valid->passes()) {		
+			$user = User::where('username', '=', Input::get('identifiant'))
+						->orWhere('email', '=', Input::get('identifiant'))
+						->first();
+			// Utilisateur trouvé
+			if($user) {
+				$nouveau_mot_de_passe = str_random(10);
+				$user->token = str_random(60);
+				$user->password = Hash::make($nouveau_mot_de_passe);
+				$user->save();
+				// email
+				$email = Mail::send('email.identifiants_perdus', 
+					array(
+						'username' => $user->username, 
+						'nouveau_mot_de_passe' => $nouveau_mot_de_passe
+					), 
+					function($m) use ($user) {
+						$m->to($user->email, $user->username)
+								->subject('Demande de nouveau mot de passe');
+					}
+				);
 				if($email) {
 					return Redirect::route('identifiants-perdus')
-					->with('success', "Un email contenant un nouveau mot de passe et un lien d'activation vous a été envoyé.", true);
+						->with('success', "Un email contenant un nouveau mot de passe vous a été envoyé.");
 				}
 				// Erreur envoi email
 				return Redirect::route('identifiants-perdus')
-				->withInput()
-				->with('error', "Une erreur est survenue lors de l'envoi du mail. Veuillez rééssayer.");
+					->withInput()
+					->with('error', "Erreur lors de l'envoi du mail. Rééssayez.");
 			}
-			// Erreur enregistrement en base de donnée // Normalement ça n'arrive pas				
+			// Utilisateur non trouvé
 			return Redirect::route('identifiants-perdus')
-			->withInput()
-			->with('error', 'unexpected-error');
+				->withInput()
+				->with('error', 'Utilisateur non trouvé. Rééssayez');
 		}
-		// Utilisateur non trouvé
+		// Erreur enregistrement en base de donnée				
 		return Redirect::route('identifiants-perdus')
-		->withInput()
-		->with('error', 'Utilisateur non trouvé. Rééssayez'); 
-	}
-
-	// Identifiants perdus Confirmer
-	public function getIdentifiantsPerdusConfirmer($userid, $token) {
-		// on cherche l'utilisateur id
-		$user = User::find($userid);
-		// Si le user est trouvé
-		if($user) {
-			// Si les token correspondent
-			if($user->token == $token) {
-				$user->password = $user->password_temp;
-				// Enregistrement
-				if($user->save()) {
-					return Redirect::route('connexion')
-					->with('success', 'Votre nouveau mot de passe a été activé.');
-				}
-				// Erreur enregistrement en base de donnée // Normalement ça n'arrive pas
-				return Redirect::route('identifiants-perdus')
-				->with('error', 'unexpected-error');
-			}
-			// Les token ne correspondent pas
-			return Redirect::route('connexion')
-			->with('error', 'Les informations recues ne nous ont pas permis de vous identifier.');
-		}
-		// Utilisateur non trouvé
-		return Redirect::route('connexion')
-		->with('error', 'Les informations recues ne nous ont pas permis de vous identifier.');
+			->withInput()
+			->with('unex-error');
 	}
 
 	// Inscription
 	public function getInscription() {
-		return View::make('acces.inscription');
+		return View::make('acces.inscription',array('titre'=>'Inscription'));
 	}
 
 	public function postInscription() {
 		$valid = Validator::make(Input::all(),
 			array(
-				'identifiant' => 'required|max:50',
+				'username' => 'required|max:50|unique:users',
 				'email' => 'required|max:50|email|unique:users',
 				'mot_de_passe' => 'required|min:5',
-				'confirmation_du_mot_de_passe' => 'required|same:mot_de_passe',
 			)
 		);
+		// Validation ratée
 		if($valid->fails()) {
 			return Redirect::route('inscription')
-			->withInput()
-			->withErrors($valid);
+				->withInput()
+				->withErrors($valid);
 		}		
+		// Validation ok
 		if($valid->passes()) {
-			$username = Input::get('identifiant');
-			$password = Input::get('mot_de_passe');
-			$email = Input::get('email');
-			$user = User::create(array(
-				'username' => $username,
-				'password' => Hash::make($password),
-				'email' => $email
-			));
-			// Enregistré
-			if($user) {
-				return Redirect::route('connexion')
-				->with('success', "Votre compte a été créé avec succés. Vous pouvez désormais vous connecter.", true);
-			}
-			//Erreur enregistrement en base de donnée // normalement ça n'arrive pas
-			return Redirect::route('inscription')
-			->withInput()
-			->with('error', "unexpected-error");
+			// Enregistre
+			$e = new User;
+			$e->username = Input::get('username');
+			$e->password = Hash::make(Input::get('mot_de_passe'));
+			$e->email = Input::get('email');
+			$e->role = 1;
+			$e->token = str_random(60);
+			$e->remember_token = str_random(60);
+			$e->save();
+			return Redirect::route('connexion')
+				->with('success', "Votre compte a été créé.<br />Vous pouvez désormais vous connecter.");
 		}
 		return Redirect::route('inscription')
-		->withInput()
-		->with('unex-error', true);
+			->withInput()
+			->with("unex-error");
 	}
+
 	
 }

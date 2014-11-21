@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'todolist_ajax_laravel',
+			'database'  => 'todolaravel',
 			'username'  => 'root',
 			'password'  => '',
 			'charset'   => 'utf8',

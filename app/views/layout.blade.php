@@ -32,17 +32,12 @@ Contact: creasitenet.com@gmail.com
     <!-- Bootstrap -->
     <link href="{{ asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
 
-    <!-- Google Font -->
-    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,700' rel='stylesheet' type='text/css'>
-    
     <!-- Plugins -->
     <link href="{{ asset('assets/plugins/font-awesome/css/font-awesome.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/growl/jquery.growl.css') }}" rel="stylesheet" />
 
     <!-- Customs -->
     <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/switch.css') }}" rel="stylesheet" />
 
     <!-- JS -->
     <script src="{{ asset('assets/plugins/jquery/jquery-2.1.1.min.js') }}" type="text/javascript" ></script>
@@ -57,21 +52,14 @@ Contact: creasitenet.com@gmail.com
 </head>
 <body> 
 
-    <!-- CONTAINER -->
-    <div id="container">          
-        @include('_header')
-        <!-- Container -->
-        <div class="container"> 
-            @yield('content')
+    <!-- wrapper -->
+    <div class="wrapper">
+        <div class="container boxed">  
+            @include('_header')
+            @yield('content')  
         </div>
-        @include('_footer')    
     </div>
-    <!-- // CONTAINER -->
-
-    <!-- Preloader -->
-    <div class="preloader"> 
-        <img src="{{ asset('assets/img/preloader.gif') }}" />
-    </div>
+    <!-- //wrapper -->
 
   <!-- JS -->
   <!-- Bootstrap -->   

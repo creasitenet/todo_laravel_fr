@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+.table {
+	border-bottom: 2px solid #eee;
+}
+th {
+text-decoration: none;
+font-size:12px;
+color: #999;
+}
+.date {
+	/*color: #333b3f;*/
+	text-decoration: none;
+	font-size:14px;
+	text-transform:uppercase;
+	text-align:left;
+	font-weight:bold;
+	padding-top:5px;
+}
+.date span{
+	text-decoration: none; 
+	text-align:left; 
+	font-weight:normal;
+} 
+
+.texte {
+text-decoration: none;
+font-size:16px;
+color: #555;
+padding-top:5px;
+}
+.boutons {
+	margin-top: 10px;
+}
+.boutons .fa {
+	font-size: 20px;
+	font-weight: bold;
+	color: #CC0000;
+}
+
+.rouge {
+	color: #CC0000;
+}

@@ -200,7 +200,7 @@ Copyright 2013 Kevin Sylvestre
       options = {};
     }
     settings = {
-      title: "Erreur",
+      title: "Information",
       style: "error"
     };
     return $.growl($.extend(settings, options));

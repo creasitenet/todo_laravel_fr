@@ -77,13 +77,6 @@ Route::filter('csrf', function() {
 	}
 });
 
-/*
-Route::filter('ajax', function()
-{
-  if (!Request::ajax()) App::abort(404);
-});
-*/
-
 // Composer
 View::composer(array('*'), function($view) {
 	// Utilisateur 

@@ -5,8 +5,8 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 class User extends Eloquent implements UserInterface, RemindableInterface {
 
 	protected $table = 'users';
-	protected $guarded = array('id', 'created_at', 'updated_at');
-	
+	protected $guarded = array('*');
+
 	public function getAuthIdentifier()	{
 		return $this->getKey();
 	}
@@ -30,5 +30,10 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
     public function getRememberTokenName() {
         return 'remember_token';
     }  
-	
+
+	// todos
+	public function todos() {
+		return $this->hasMany('Todo','user_id')->orderBy('created_at','DESC');
+	}
+
 }

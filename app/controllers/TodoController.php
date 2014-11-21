@@ -12,27 +12,23 @@ class TodoController extends \BaseController {
 
     // Ajouter. Ajax. Retour Json.
     public function postAjaxAjouter() {
-        $texte = $_POST['texte'];//Input::get('texte');
+        $texte = Input::get('texte');
         if ($texte=='') {
             $d["resultat"] = 0;
             $d["message"] = "La tâche ne peut pas être vide.";
-       } else {  
+       } else {
             $todo = new Todo;
             if (Auth::check()) {
-                $todo->user_id = $this->user->id;
+                $todo->user_id = Auth::user()->id;
             } else {
                 $todo->user_id = 0;
             } 
             $todo->texte = $texte;
-            $todo->fini = 0;
-            if ($todo->save()) {
-                $d["resultat"] =  1;
-                $d["message"] = "La tâche a été ajoutée.";
-                $d["todo_id"] = $todo->id;
-            } else {
-                $d["resultat"] =  0;
-                $d["message"] =  "Impossible d'ajouter la tâche.";
-            }
+            $todo->statut = 0;
+            $todo->save();
+            $d["resultat"] =  1;
+            $d["message"] = "La tâche a été ajoutée.";
+            $d["todo_id"] = $todo->id;
         }          
         return Response::json($d);
     }
@@ -40,21 +36,21 @@ class TodoController extends \BaseController {
     // Refresh Liste des todos
     public function getAjaxAjouterALaListe($id) {
         $todo = Todo::find($id);
-        return View::make('todo.ajax_ajouter_a_la_liste', array('e' => $todo));
+        return View::make('todo.ajax_ajouter_a_la_liste', array('t' => $todo));
     }
     
     // Maj statut. Ajax. Retour Json.
     public function postAjaxMajStatut() {
         $todo = Todo::find(Input::get('id'));
-        if ($todo->fini==1) {
-            $todo->fini=0;
+        if ($todo->statut==1) {
+            $todo->statut=0;
             $d["message"] =  "La tâche est à faire.";
         } else {
-            $todo->fini=1;
+            $todo->statut=1;
             $d["message"] =  "La tâche est finie.";
         }
         $todo->save();
-        $d["resultat"] = $todo->fini;
+        $d["resultat"] = $todo->statut;
         return  Response::json($d);
     }
 

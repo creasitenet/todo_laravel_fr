@@ -1,10 +1,8 @@
 @extends('layout')
-
 @section('content')
 
-<div class="container content">   
     <div class="row">
-        <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+        <div class="col-sm-6 col-sm-offset-3">
 
             <div class="reg-header">            
                 <h3>Connectez vous à votre compte</h3>
@@ -12,7 +10,7 @@
 
             @include('_notifications')
 
-            {{ Form::open(array('route' => 'connexion-post')) }}
+            {{ Form::open(array('route' => 'connexion')) }}
 
             	<div class="form-group {{ $errors->has('identifiant') ? ' has-error' : '' }}">
                 <div class="input-group">
@@ -34,7 +32,7 @@
                     <div class="col-md-6">                     
                     </div>
                     <div class="col-md-6">
-                    	<input type="submit" name="connexion" value="SE CONNECTER" class="btn btn-green btn-lg pull-right"  />                     
+                    	<input type="submit" name="connexion" value="SE CONNECTER" class="btn btn-primary btn-lg pull-right"  />                     
                     </div>
                 </div>
 
@@ -42,11 +40,10 @@
 
             <hr>
             <h4>Identifiants perdu ?</h4>
-            <p><a href="{{ URL::route('identifiants-perdus') }}" class="color-green">réinitialisez votre mot de passe</a></p>
+            <p><b><a href="{{ URL::route('identifiants-perdus') }}">réinitialisez votre mot de passe</a></b></p>
 
             <br />    
 		</div>
     </div>
-</div>  
 
 @stop
