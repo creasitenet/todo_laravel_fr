@@ -119,8 +119,8 @@ return array(
 	|
 	*/
 
-	'pretend' => true,
-	//'pretend' => false,
+	//'pretend' => true,
+	'pretend' => false,
 
 
 );
